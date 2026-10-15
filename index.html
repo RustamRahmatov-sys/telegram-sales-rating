@@ -29,7 +29,15 @@ async function startApp(){
     });
     const result=await response.json();
     if(!response.ok||result.authorized!==true){
-      throw new Error(result.error||'Доступ запрещён');
+      throw new Error(
+  (result.error || 'Доступ запрещён') +
+  (result.telegramErrorCode
+    ? ' | Код: ' + result.telegramErrorCode
+    : '') +
+  (result.telegramDescription
+    ? ' | Причина: ' + result.telegramDescription
+    : '')
+);
     }
     status.textContent='✓ Доступ подтверждён. Пока отображаются демонстрационные данные, не Google Sheets.';
     document.getElementById('dashboard').style.display='block';
