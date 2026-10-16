@@ -7,7 +7,7 @@
 </style></head><body><main><h1>Итоги продаж</h1><div class="subtitle muted">🏆 Рейтинг торговых представителей</div><div id="demo" role="status">Проверяем доступ через Telegram…</div><div id="auth-error" role="alert" style="display:none;background:#ffe7e4;color:#842d27;border-radius:12px;padding:16px;margin-top:12px"></div><div id="dashboard" style="display:none"><section class="panel"><div class="label">ВЫБЕРИТЕ БРЕНД</div><div class="tabs" id="brands"></div><div class="label" style="margin-top:19px">ПЕРИОД</div><div class="tabs" id="periods"></div><div class="period-selectors" id="period-selectors"></div><div class="period-note" id="period-note"></div></section><section class="panel"><div class="label">📊 ОБЩИЕ ПОКАЗАТЕЛИ</div><div class="stats" id="stats"></div></section><section class="panel"><div class="label">📈 ДИНАМИКА ВЫПОЛНЕНИЯ ПЛАНА</div><div id="trend"></div></section><section class="panel"><div class="label">🏅 ЛИДЕРЫ И АУТСАЙДЕРЫ</div><div id="top-bottom"></div></section><section class="panel" id="forecast-panel"><div class="label">🎯 ДО ВЫПОЛНЕНИЯ ПЛАНА</div><div id="forecast"></div></section><section class="panel"><div class="person"><div class="label">🏆 РЕЙТИНГ ПРЕДСТАВИТЕЛЕЙ</div><strong id="count"></strong></div><div id="ranking"></div></section></div></main><nav class="bottom" id="bottom-nav" style="display:none"><span>🏷 Бренды</span><b>📊 Рейтинг</b><span>📅 Период</span></nav>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-const APP_VERSION='v1.5 — графики, ТОП-3 и прогноз';
+const APP_VERSION='v1.5.2 — изменение в пунктах';
 const API_URL='https://sales-rating-api.rustamrahmatov.workers.dev/data';
 let rows=[];
 let brand='Все бренды',period='Месяц',selectedYear=null,selectedMonth=null,selectedQuarter=null,chartRep='__all__';
@@ -84,7 +84,7 @@ function render(){
     const delta=current-100*previousSales/previousPlan;
     const cls=delta>0.05?'up':delta< -0.05?'down':'same';
     const sign=delta>0.05?'+':'';
-    return `<span class="${cls}">${sign}${delta.toFixed(1)} п. п.</span> к ${esc(prevLabel)}`;
+    return `<span class="${cls}">${sign}${delta.toFixed(1).replace(/\.0$/,'')} пунктов</span> к ${esc(prevLabel)}`;
   };
   const rankMovement=(p,i)=>{
     const old=prevPositions.get(p.name.toLocaleLowerCase('ru-RU'));
@@ -118,13 +118,13 @@ function render(){
     document.getElementById('stats').insertAdjacentHTML('afterend',
       `<div id="period-comparison" class="comparison-note">Изменение выполнения: ${
         comparePct(totalPlan?100*totalSales/totalPlan:0,prevPlan,prevSales)
-      }. Сравниваются календарные периоды; текущий может быть неполным.</div>`);
+      }</div>`);
   }
   document.getElementById('count').textContent=ranked.length+' чел.';
   const breakdown=p=>{
     const list=[...p.brands.values()].sort((a,b)=>a.name.localeCompare(b.name,'ru'));
     const lines=list.map(b=>`<tr><td>${esc(b.name)}</td><td>${fmt(b.plan)}</td><td>${fmt(b.sales)}</td><td>${b.plan?(100*b.sales/b.plan).toFixed(1):'—'}%</td></tr>`).join('');
-    return `<div class="detail"><div>Брендов: <b>${list.length}</b></div><table class="brand-breakdown"><thead><tr><th>Бренд</th><th>План</th><th>Продажи</th><th>%</th></tr></thead><tbody>${lines}</tbody><tfoot><tr><td>Итого</td><td>${fmt(p.plan)}</td><td>${fmt(p.sales)}</td><td>${p.plan?p.pct.toFixed(1):'—'}%</td></tr></tfoot></table></div>`;
+    return `<div class="detail"><table class="brand-breakdown"><thead><tr><th>Бренд</th><th>План</th><th>Продажи</th><th>%</th></tr></thead><tbody>${lines}</tbody><tfoot><tr><td>Итого</td><td>${fmt(p.plan)}</td><td>${fmt(p.sales)}</td><td>${p.plan?p.pct.toFixed(1):'—'}%</td></tr></tfoot></table></div>`;
   };
   let html='';
   ranked.forEach((p,i)=>{
@@ -147,7 +147,7 @@ function renderInsights(ranked,subset,totalPlan,totalSales){
     const top=ranked.slice(0,3);
     const bottom=[...ranked].reverse().slice(0,3);
     const items=arr=>arr.map(p=>`<li><b>${esc(p.name)}</b> <small>— ${p.pct.toFixed(1)}%</small></li>`).join('');
-    list.innerHTML=`<div class="insights-grid"><div class="insight"><h3>🏆 ТОП-3 лучших</h3><ol>${items(top)}</ol></div><div class="insight"><h3>📉 ТОП-3 отстающих</h3><ol>${items(bottom)}</ol></div></div>${ranked.length<6?'<div class="comparison-note">Представителей меньше шести: один человек может оказаться в обоих списках.</div>':''}`;
+    list.innerHTML=`<div class="insights-grid"><div class="insight"><h3>🏆 ТОП-3 лучших</h3><ol>${items(top)}</ol></div><div class="insight"><h3>📉 ТОП-3 отстающих</h3><ol>${items(bottom)}</ol></div></div>`;
   }
   // The forecast is meaningful only for the current calendar month.
   const currentMonth=period==='Месяц'&&selectedYear===now.year&&selectedMonth===now.month;
@@ -159,7 +159,7 @@ function renderInsights(ranked,subset,totalPlan,totalSales){
     const today=Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Dushanbe',day:'numeric'}).format(new Date()));
     const daysLeft=Math.max(0,daysInMonth-today);
     const daily=daysLeft?Math.ceil(remaining/daysLeft):null;
-    document.getElementById('forecast').innerHTML=subset.length?`<div class="forecast-main">${fmt(remaining)}</div><div class="meta">Осталось продать до 100% плана${brand==='Все бренды'?' по всем брендам':' по выбранному бренду'}</div><div class="forecast-row"><div class="stat"><span>План</span><strong>${fmt(totalPlan)}</strong></div><div class="stat"><span>Продажи</span><strong>${fmt(totalSales)}</strong></div><div class="stat"><span>Осталось дней после сегодня</span><strong>${daysLeft}</strong></div></div><div class="forecast-meta">${remaining===0?'План выполнен.':daysLeft?`Для выполнения плана нужно в среднем продавать <b>${fmt(daily)}</b> в день в оставшиеся ${daysLeft} календарных дней.`:'Сегодня последний день месяца: остаток нужно продать сегодня.'}<div>Расчёт по календарным дням, без учёта выходных и будущих поступлений. Единицы — как в Google Sheets.</div></div>`:'<div class="empty">Нет данных за текущий месяц</div>';
+    document.getElementById('forecast').innerHTML=subset.length?`<div class="forecast-main">${fmt(remaining)}</div><div class="meta">Осталось продать до 100% плана${brand==='Все бренды'?' по всем брендам':' по выбранному бренду'}</div><div class="forecast-row"><div class="stat"><span>План</span><strong>${fmt(totalPlan)}</strong></div><div class="stat"><span>Продажи</span><strong>${fmt(totalSales)}</strong></div><div class="stat"><span>Осталось дней после сегодня</span><strong>${daysLeft}</strong></div></div><div class="forecast-meta">${remaining===0?'План выполнен.':daysLeft?`Для выполнения плана нужно в среднем продавать <b>${fmt(daily)}</b> в день в оставшиеся ${daysLeft} календарных дней.`:'Сегодня последний день месяца: остаток нужно продать сегодня.'}<div>Расчёт по календарным дням, без учёта выходных и будущих поступлений.</div></div>`:'<div class="empty">Нет данных за текущий месяц</div>';
   }
   // Aggregate monthly history by representative and selected brand, across the selected year.
   const yearRows=rows.filter(r=>r.year===selectedYear&&r.month<= (selectedYear===now.year?now.month:12)&&(brand==='Все бренды'||r.brand===brand));
@@ -175,7 +175,7 @@ function renderInsights(ranked,subset,totalPlan,totalSales){
   });
   const available=data.filter(d=>d.value!==null);
   const trend=document.getElementById('trend');
-  trend.innerHTML=`<div class="chart-controls"><label>Представитель<select id="chart-rep">${options.map(([v,n])=>`<option value="${esc(v)}" ${v===chartRep?'selected':''}>${esc(n)}</option>`).join('')}</select></label></div><div class="chart-scroll" id="chart-svg"></div><div class="comparison-note">${esc(String(selectedYear))} год · ${brand==='Все бренды'?'Все бренды':esc(brand)}. Месяцы без плана не соединяются линией.</div>`;
+  trend.innerHTML=`<div class="chart-controls"><label>Представитель<select id="chart-rep">${options.map(([v,n])=>`<option value="${esc(v)}" ${v===chartRep?'selected':''}>${esc(n)}</option>`).join('')}</select></label></div><div class="chart-scroll" id="chart-svg"></div><div class="comparison-note">${esc(String(selectedYear))} год · ${brand==='Все бренды'?'Все бренды':esc(brand)}</div>`;
   document.getElementById('chart-rep').onchange=e=>{chartRep=e.target.value;renderInsights(ranked,subset,totalPlan,totalSales)};
   const holder=document.getElementById('chart-svg');
   if(!available.length){holder.innerHTML='<div class="empty">Нет помесячных данных с планом для графика</div>';return}
