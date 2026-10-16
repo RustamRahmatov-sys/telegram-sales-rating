@@ -5,6 +5,7 @@
 .period-selectors{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.period-field{flex:1;min-width:130px}.period-field label{display:block;font-size:12px;font-weight:700;color:#88897f;margin-bottom:6px}.period-field select{width:100%;padding:12px;border:1px solid #deded4;border-radius:12px;background:#fff;color:#282b28;font:inherit;font-weight:650}.period-note{font-size:12px;color:#74776f;margin-top:10px}.leader-details{margin-top:16px}.leader-details summary{cursor:pointer;font-size:13px;font-weight:750;color:#247a56;list-style:none}.leader-details summary::-webkit-details-marker{display:none}.brand-breakdown{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;line-height:1.5}.brand-breakdown th,.brand-breakdown td{padding:9px 4px;border-bottom:1px solid #e4e7df;text-align:right;font-variant-numeric:tabular-nums}.brand-breakdown th:first-child,.brand-breakdown td:first-child{text-align:left;overflow-wrap:anywhere}.brand-breakdown th{font-weight:650;color:#6b756d}.brand-breakdown tfoot td{font-weight:800;border-bottom:0}.rank .detail{overflow-x:auto}.leader-details .detail{overflow-x:auto}.comparison{font-size:12px;margin-top:9px;color:#6a7069}.comparison .up{color:#188258;font-weight:750}.comparison .down{color:#b64b40;font-weight:750}.comparison .same{color:#737970;font-weight:750}.comparison-note{font-size:12px;color:#77786e;margin-top:9px;line-height:1.5}</style></head><body><main><h1>Итоги продаж</h1><div class="subtitle muted">🏆 Рейтинг торговых представителей</div><div id="demo" role="status">Проверяем доступ через Telegram…</div><div id="auth-error" role="alert" style="display:none;background:#ffe7e4;color:#842d27;border-radius:12px;padding:16px;margin-top:12px"></div><div id="dashboard" style="display:none"><section class="panel"><div class="label">ВЫБЕРИТЕ БРЕНД</div><div class="tabs" id="brands"></div><div class="label" style="margin-top:19px">ПЕРИОД</div><div class="tabs" id="periods"></div><div class="period-selectors" id="period-selectors"></div><div class="period-note" id="period-note"></div></section><section class="panel"><div class="label">📊 ОБЩИЕ ПОКАЗАТЕЛИ</div><div class="stats" id="stats"></div></section><section class="panel"><div class="person"><div class="label">🏆 РЕЙТИНГ ПРЕДСТАВИТЕЛЕЙ</div><strong id="count"></strong></div><div id="ranking"></div></section></div></main><nav class="bottom" id="bottom-nav" style="display:none"><span>🏷 Бренды</span><b>📊 Рейтинг</b><span>📅 Период</span></nav>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+const APP_VERSION='v1.4 — сравнение периодов';
 const API_URL='https://sales-rating-api.rustamrahmatov.workers.dev/data';
 let rows=[];
 let brand='Все бренды',period='Месяц',selectedYear=null,selectedMonth=null,selectedQuarter=null;
@@ -113,7 +114,7 @@ function render(){
   document.getElementById('period-comparison')?.remove();
   if(subset.length){
     document.getElementById('stats').insertAdjacentHTML('afterend',
-      `<div id="period-comparison" class="comparison-note">Сравнение с ${esc(prevLabel)}: ${
+      `<div id="period-comparison" class="comparison-note">Изменение выполнения: ${
         comparePct(totalPlan?100*totalSales/totalPlan:0,prevPlan,prevSales)
       }. Сравниваются календарные периоды; текущий может быть неполным.</div>`);
   }
@@ -126,11 +127,11 @@ function render(){
   let html='';
   ranked.forEach((p,i)=>{
     const comparison=comparePct(p.pct,prevPeople.get(p.name.toLocaleLowerCase('ru-RU'))?.plan||0,prevPeople.get(p.name.toLocaleLowerCase('ru-RU'))?.sales||0);
-    const comparisonHtml=`<div class="comparison">К ${esc(prevLabel)}: ${comparison}${rankMovement(p,i)}</div>`;
+    const comparisonHtml=`<div class="comparison">${comparison}${rankMovement(p,i)}</div>`;
     if(i===0){
       html+=`<div class="leader"><div class="eyebrow">🥇 ЛУЧШИЙ РЕЗУЛЬТАТ</div><div class="person"><h3>${esc(p.name)}</h3><div class="percent">${p.pct.toFixed(1)}%</div></div><div class="meta">План ${fmt(p.plan)} · Продажи ${fmt(p.sales)}</div><div class="bar"><div style="width:${Math.max(0,Math.min(100,p.pct))}%"></div></div>${comparisonHtml}<details class="leader-details"><summary>Показать показатели по брендам ▾</summary>${breakdown(p)}</details></div>`;
     }else{
-      html+=`<details class="rank"><summary><div class="pos">${i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div><div class="person"><h3>${esc(p.name)}</h3><strong>${p.pct.toFixed(1)}% ▾</strong></div><div class="bar"><div style="width:${Math.max(0,Math.min(100,p.pct))}%"></div>${comparisonHtml}</div></summary>${breakdown(p)}</details>`;
+      html+=`<details class="rank"><summary><div class="pos">${i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div><div class="person"><h3>${esc(p.name)}</h3><strong>${p.pct.toFixed(1)}% ▾</strong></div><div class="bar"><div style="width:${Math.max(0,Math.min(100,p.pct))}%"></div></div>${comparisonHtml}</summary>${breakdown(p)}</details>`;
     }
   });
   document.getElementById('ranking').innerHTML=html||'<div class="empty">Нет данных за выбранный период</div>';
@@ -147,7 +148,7 @@ async function startApp(){
     const result=await response.json();
     if(!response.ok||result.authorized!==true||!Array.isArray(result.rows))throw new Error(result.error||'Не удалось загрузить данные');
     rows=result.rows.map(r=>({year:Number(r.year),month:Number(r.month),brand:String(r.brand||'').trim(),rep:String(r.rep||'').trim(),plan:Number(r.plan),sales:Number(r.sales)})).filter(r=>Number.isInteger(r.year)&&Number.isInteger(r.month)&&r.month>=1&&r.month<=12&&r.brand&&r.rep&&Number.isFinite(r.plan)&&Number.isFinite(r.sales));
-    status.textContent=`✓ Доступ подтверждён. Загружено строк из Google Sheets: ${rows.length}.`;
+    status.textContent=`✓ ${APP_VERSION}. Загружено строк из Google Sheets: ${rows.length}.`;
     status.style.background='#e2f2e9';status.style.color='#247a56';
     document.getElementById('dashboard').style.display='block';
     document.getElementById('bottom-nav').style.display='flex';
