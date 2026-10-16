@@ -2,13 +2,15 @@
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Рейтинг продаж</title>
 <style>
 :root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#282b28;background:#f3efe4}*{box-sizing:border-box}body{margin:0}main{max-width:660px;margin:auto;padding:25px 16px 100px}h1{font-size:28px;margin:0 0 4px}small,.muted{color:#87877f}.subtitle{margin-bottom:22px}.panel{background:#fff;border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 2px 12px #423e3110}.label{font-size:12px;font-weight:800;letter-spacing:.06em;color:#88897f;margin:0 0 13px}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab{border:0;background:#f1f0e9;border-radius:12px;padding:11px 13px;font-weight:700;color:#5c605b;cursor:pointer}.tab.active{background:#ddefe6;color:#247a56}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.stat{background:#f5f3ed;border-radius:15px;padding:13px 9px}.stat span{font-size:11px;color:#88877f;display:block}.stat strong{font-size:18px;display:block;margin-top:4px}.leader{background:#e2f2e9;border-radius:20px;padding:20px;margin-top:18px}.leader .eyebrow{font-size:11px;letter-spacing:.04em;color:#408f6d;font-weight:800}.person{display:flex;align-items:center;justify-content:space-between;gap:12px}.person h3{font-size:18px;overflow-wrap:anywhere;margin:10px 0}.percent{font-size:26px;font-weight:800}.leader .percent{color:#27956a}.meta{font-size:12px;color:#6f786e}.rank{border:1px solid #e6e4dc;border-radius:19px;padding:16px;margin-top:12px;cursor:pointer}.rank summary{list-style:none}.rank summary::-webkit-details-marker{display:none}.rank .pos{color:#9b9a92;font-size:12px;font-weight:700}.bar{height:8px;background:#e9e7df;border-radius:9px;overflow:hidden;margin-top:12px}.bar>div{height:100%;background:#72b496;border-radius:9px}.detail{border-top:1px solid #e9e8e2;margin-top:14px;padding-top:13px;font-size:13px;line-height:1.9;color:#666}.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:14px max(18px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:28px;font-size:13px;color:#74776f}.bottom b{color:#318663}.empty{padding:25px 0;text-align:center;color:#85857c}#demo{background:#fff4d9;color:#84651b;border-radius:10px;padding:10px 13px;font-size:12px;margin-top:12px}
-.period-selectors{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.period-field{flex:1;min-width:130px}.period-field label{display:block;font-size:12px;font-weight:700;color:#88897f;margin-bottom:6px}.period-field select{width:100%;padding:12px;border:1px solid #deded4;border-radius:12px;background:#fff;color:#282b28;font:inherit;font-weight:650}.period-note{font-size:12px;color:#74776f;margin-top:10px}.leader-details{margin-top:16px}.leader-details summary{cursor:pointer;font-size:13px;font-weight:750;color:#247a56;list-style:none}.leader-details summary::-webkit-details-marker{display:none}.brand-breakdown{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;line-height:1.5}.brand-breakdown th,.brand-breakdown td{padding:9px 4px;border-bottom:1px solid #e4e7df;text-align:right;font-variant-numeric:tabular-nums}.brand-breakdown th:first-child,.brand-breakdown td:first-child{text-align:left;overflow-wrap:anywhere}.brand-breakdown th{font-weight:650;color:#6b756d}.brand-breakdown tfoot td{font-weight:800;border-bottom:0}.rank .detail{overflow-x:auto}.leader-details .detail{overflow-x:auto}.comparison{font-size:12px;margin-top:9px;color:#6a7069}.comparison .up{color:#188258;font-weight:750}.comparison .down{color:#b64b40;font-weight:750}.comparison .same{color:#737970;font-weight:750}.comparison-note{font-size:12px;color:#77786e;margin-top:9px;line-height:1.5}</style></head><body><main><h1>Итоги продаж</h1><div class="subtitle muted">🏆 Рейтинг торговых представителей</div><div id="demo" role="status">Проверяем доступ через Telegram…</div><div id="auth-error" role="alert" style="display:none;background:#ffe7e4;color:#842d27;border-radius:12px;padding:16px;margin-top:12px"></div><div id="dashboard" style="display:none"><section class="panel"><div class="label">ВЫБЕРИТЕ БРЕНД</div><div class="tabs" id="brands"></div><div class="label" style="margin-top:19px">ПЕРИОД</div><div class="tabs" id="periods"></div><div class="period-selectors" id="period-selectors"></div><div class="period-note" id="period-note"></div></section><section class="panel"><div class="label">📊 ОБЩИЕ ПОКАЗАТЕЛИ</div><div class="stats" id="stats"></div></section><section class="panel"><div class="person"><div class="label">🏆 РЕЙТИНГ ПРЕДСТАВИТЕЛЕЙ</div><strong id="count"></strong></div><div id="ranking"></div></section></div></main><nav class="bottom" id="bottom-nav" style="display:none"><span>🏷 Бренды</span><b>📊 Рейтинг</b><span>📅 Период</span></nav>
+.period-selectors{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.period-field{flex:1;min-width:130px}.period-field label{display:block;font-size:12px;font-weight:700;color:#88897f;margin-bottom:6px}.period-field select{width:100%;padding:12px;border:1px solid #deded4;border-radius:12px;background:#fff;color:#282b28;font:inherit;font-weight:650}.period-note{font-size:12px;color:#74776f;margin-top:10px}.leader-details{margin-top:16px}.leader-details summary{cursor:pointer;font-size:13px;font-weight:750;color:#247a56;list-style:none}.leader-details summary::-webkit-details-marker{display:none}.brand-breakdown{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;line-height:1.5}.brand-breakdown th,.brand-breakdown td{padding:9px 4px;border-bottom:1px solid #e4e7df;text-align:right;font-variant-numeric:tabular-nums}.brand-breakdown th:first-child,.brand-breakdown td:first-child{text-align:left;overflow-wrap:anywhere}.brand-breakdown th{font-weight:650;color:#6b756d}.brand-breakdown tfoot td{font-weight:800;border-bottom:0}.rank .detail{overflow-x:auto}.leader-details .detail{overflow-x:auto}.comparison{font-size:12px;margin-top:9px;color:#6a7069}.comparison .up{color:#188258;font-weight:750}.comparison .down{color:#b64b40;font-weight:750}.comparison .same{color:#737970;font-weight:750}.comparison-note{font-size:12px;color:#77786e;margin-top:9px;line-height:1.5}
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.insight{background:#f5f3ed;border-radius:15px;padding:13px}.insight h3{font-size:13px;margin:0 0 10px}.insight ol{margin:0;padding-left:20px;font-size:13px;line-height:1.9}.insight li{overflow-wrap:anywhere}.insight small{font-size:11px}.chart-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.chart-controls label{flex:1;min-width:130px;font-size:12px;color:#74776f}.chart-controls select{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid #deded4;border-radius:10px;background:#fff;font:inherit;color:#282b28}.chart-scroll{overflow-x:auto}.chart-scroll svg{display:block;width:100%;min-width:320px;height:auto}.forecast-main{font-size:25px;font-weight:800;color:#247a56}.forecast-meta{font-size:12px;color:#6f786e;line-height:1.7;margin-top:10px}.forecast-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.forecast-row .stat{flex:1;min-width:110px}@media(max-width:420px){.insights-grid{grid-template-columns:1fr}}
+</style></head><body><main><h1>Итоги продаж</h1><div class="subtitle muted">🏆 Рейтинг торговых представителей</div><div id="demo" role="status">Проверяем доступ через Telegram…</div><div id="auth-error" role="alert" style="display:none;background:#ffe7e4;color:#842d27;border-radius:12px;padding:16px;margin-top:12px"></div><div id="dashboard" style="display:none"><section class="panel"><div class="label">ВЫБЕРИТЕ БРЕНД</div><div class="tabs" id="brands"></div><div class="label" style="margin-top:19px">ПЕРИОД</div><div class="tabs" id="periods"></div><div class="period-selectors" id="period-selectors"></div><div class="period-note" id="period-note"></div></section><section class="panel"><div class="label">📊 ОБЩИЕ ПОКАЗАТЕЛИ</div><div class="stats" id="stats"></div></section><section class="panel"><div class="label">📈 ДИНАМИКА ВЫПОЛНЕНИЯ ПЛАНА</div><div id="trend"></div></section><section class="panel"><div class="label">🏅 ЛИДЕРЫ И АУТСАЙДЕРЫ</div><div id="top-bottom"></div></section><section class="panel" id="forecast-panel"><div class="label">🎯 ДО ВЫПОЛНЕНИЯ ПЛАНА</div><div id="forecast"></div></section><section class="panel"><div class="person"><div class="label">🏆 РЕЙТИНГ ПРЕДСТАВИТЕЛЕЙ</div><strong id="count"></strong></div><div id="ranking"></div></section></div></main><nav class="bottom" id="bottom-nav" style="display:none"><span>🏷 Бренды</span><b>📊 Рейтинг</b><span>📅 Период</span></nav>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-const APP_VERSION='v1.4 — сравнение периодов';
+const APP_VERSION='v1.5 — графики, ТОП-3 и прогноз';
 const API_URL='https://sales-rating-api.rustamrahmatov.workers.dev/data';
 let rows=[];
-let brand='Все бренды',period='Месяц',selectedYear=null,selectedMonth=null,selectedQuarter=null;
+let brand='Все бренды',period='Месяц',selectedYear=null,selectedMonth=null,selectedQuarter=null,chartRep='__all__';
 const todayParts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Dushanbe',year:'numeric',month:'numeric'}).formatToParts(new Date());
 const now={year:Number(todayParts.find(p=>p.type==='year').value),month:Number(todayParts.find(p=>p.type==='month').value)};
 const fmt=n=>Math.round(n).toLocaleString('ru-RU');
@@ -135,7 +137,65 @@ function render(){
     }
   });
   document.getElementById('ranking').innerHTML=html||'<div class="empty">Нет данных за выбранный период</div>';
+   renderInsights(ranked,subset,totalPlan,totalSales);
 }
+
+function renderInsights(ranked,subset,totalPlan,totalSales){
+  const list=document.getElementById('top-bottom');
+  if(!ranked.length){list.innerHTML='<div class="empty">Нет данных за выбранный период</div>'}
+  else{
+    const top=ranked.slice(0,3);
+    const bottom=[...ranked].reverse().slice(0,3);
+    const items=arr=>arr.map(p=>`<li><b>${esc(p.name)}</b> <small>— ${p.pct.toFixed(1)}%</small></li>`).join('');
+    list.innerHTML=`<div class="insights-grid"><div class="insight"><h3>🏆 ТОП-3 лучших</h3><ol>${items(top)}</ol></div><div class="insight"><h3>📉 ТОП-3 отстающих</h3><ol>${items(bottom)}</ol></div></div>${ranked.length<6?'<div class="comparison-note">Представителей меньше шести: один человек может оказаться в обоих списках.</div>':''}`;
+  }
+  // The forecast is meaningful only for the current calendar month.
+  const currentMonth=period==='Месяц'&&selectedYear===now.year&&selectedMonth===now.month;
+  const fp=document.getElementById('forecast-panel');
+  fp.style.display=currentMonth?'block':'none';
+  if(currentMonth){
+    const remaining=Math.max(0,totalPlan-totalSales);
+    const daysInMonth=new Date(now.year,now.month,0).getDate();
+    const today=Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Dushanbe',day:'numeric'}).format(new Date()));
+    const daysLeft=Math.max(0,daysInMonth-today);
+    const daily=daysLeft?Math.ceil(remaining/daysLeft):null;
+    document.getElementById('forecast').innerHTML=subset.length?`<div class="forecast-main">${fmt(remaining)}</div><div class="meta">Осталось продать до 100% плана${brand==='Все бренды'?' по всем брендам':' по выбранному бренду'}</div><div class="forecast-row"><div class="stat"><span>План</span><strong>${fmt(totalPlan)}</strong></div><div class="stat"><span>Продажи</span><strong>${fmt(totalSales)}</strong></div><div class="stat"><span>Осталось дней после сегодня</span><strong>${daysLeft}</strong></div></div><div class="forecast-meta">${remaining===0?'План выполнен.':daysLeft?`Для выполнения плана нужно в среднем продавать <b>${fmt(daily)}</b> в день в оставшиеся ${daysLeft} календарных дней.`:'Сегодня последний день месяца: остаток нужно продать сегодня.'}<div>Расчёт по календарным дням, без учёта выходных и будущих поступлений. Единицы — как в Google Sheets.</div></div>`:'<div class="empty">Нет данных за текущий месяц</div>';
+  }
+  // Aggregate monthly history by representative and selected brand, across the selected year.
+  const yearRows=rows.filter(r=>r.year===selectedYear&&r.month<= (selectedYear===now.year?now.month:12)&&(brand==='Все бренды'||r.brand===brand));
+  const repNames=[...new Set(yearRows.map(r=>r.rep))].sort((a,b)=>a.localeCompare(b,'ru'));
+  if(chartRep!=='__all__'&&!repNames.includes(chartRep))chartRep='__all__';
+  const options=[['__all__','Все представители'],...repNames.map(n=>[n,n])];
+  const filtered=yearRows.filter(r=>chartRep==='__all__'||r.rep===chartRep);
+  const months=Array.from({length:12},(_,i)=>i+1).filter(m=>m<=(selectedYear===now.year?now.month:12));
+  const data=months.map(m=>{
+    const mRows=filtered.filter(r=>r.month===m);
+    const plan=mRows.reduce((sum,r)=>sum+r.plan,0),sales=mRows.reduce((sum,r)=>sum+r.sales,0);
+    return {m,value:plan>0?100*sales/plan:null};
+  });
+  const available=data.filter(d=>d.value!==null);
+  const trend=document.getElementById('trend');
+  trend.innerHTML=`<div class="chart-controls"><label>Представитель<select id="chart-rep">${options.map(([v,n])=>`<option value="${esc(v)}" ${v===chartRep?'selected':''}>${esc(n)}</option>`).join('')}</select></label></div><div class="chart-scroll" id="chart-svg"></div><div class="comparison-note">${esc(String(selectedYear))} год · ${brand==='Все бренды'?'Все бренды':esc(brand)}. Месяцы без плана не соединяются линией.</div>`;
+  document.getElementById('chart-rep').onchange=e=>{chartRep=e.target.value;renderInsights(ranked,subset,totalPlan,totalSales)};
+  const holder=document.getElementById('chart-svg');
+  if(!available.length){holder.innerHTML='<div class="empty">Нет помесячных данных с планом для графика</div>';return}
+  const w=600,h=245,left=47,right=14,top=18,bottom=40;
+  const plotW=w-left-right,plotH=h-top-bottom;
+  const maxV=Math.max(100,...available.map(d=>d.value));
+  const maxY=Math.ceil(maxV/25)*25;
+  const x=m=>left+(m-1)*plotW/11;
+  const y=v=>top+plotH-(v/maxY)*plotH;
+  let svg=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="График выполнения плана по месяцам в процентах" xmlns="http://www.w3.org/2000/svg">`;
+  for(let v=0;v<=maxY;v+=maxY/4){const yy=y(v);svg+=`<line x1="${left}" y1="${yy}" x2="${w-right}" y2="${yy}" stroke="#e8e9e3"/><text x="${left-7}" y="${yy+4}" text-anchor="end" font-size="11" fill="#74776f">${Math.round(v)}%</text>`}
+  svg+=`<line x1="${left}" y1="${y(100)}" x2="${w-right}" y2="${y(100)}" stroke="#92b5a0" stroke-dasharray="5 5"/>`;
+  for(const d of data){svg+=`<text x="${x(d.m)}" y="${h-15}" text-anchor="middle" font-size="11" fill="#74776f">${MONTHS[d.m-1].slice(0,3)}</text>`}
+  let previous=null;
+  for(const d of data){if(d.value===null){previous=null;continue}if(previous){svg+=`<line x1="${x(previous.m)}" y1="${y(previous.value)}" x2="${x(d.m)}" y2="${y(d.value)}" stroke="#27956a" stroke-width="3" stroke-linecap="round"/>`}previous=d}
+  for(const d of available){svg+=`<circle cx="${x(d.m)}" cy="${y(d.value)}" r="5" fill="#27956a" stroke="white" stroke-width="2"><title>${MONTHS[d.m-1]}: ${d.value.toFixed(1)}%</title></circle>`}
+  svg+='</svg>';
+  holder.innerHTML=svg;
+}
+
 async function startApp(){
   const status=document.getElementById('demo');
   const error=document.getElementById('auth-error');
