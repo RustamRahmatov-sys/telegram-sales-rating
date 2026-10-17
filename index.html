@@ -208,8 +208,7 @@ async function startApp(){
     const result=await response.json();
     if(!response.ok||result.authorized!==true||!Array.isArray(result.rows))throw new Error(result.error||'Не удалось загрузить данные');
     rows=result.rows.map(r=>({year:Number(r.year),month:Number(r.month),brand:String(r.brand||'').trim(),rep:String(r.rep||'').trim(),plan:Number(r.plan),sales:Number(r.sales)})).filter(r=>Number.isInteger(r.year)&&Number.isInteger(r.month)&&r.month>=1&&r.month<=12&&r.brand&&r.rep&&Number.isFinite(r.plan)&&Number.isFinite(r.sales));
-    status.textContent=`✓ ${APP_VERSION}. Загружено строк из Google Sheets: ${rows.length}.`;
-    status.style.background='#e2f2e9';status.style.color='#247a56';
+    status.style.display='none';
     document.getElementById('dashboard').style.display='block';
     document.getElementById('bottom-nav').style.display='flex';
     render();
