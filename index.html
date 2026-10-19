@@ -16,6 +16,7 @@ const now={year:Number(todayParts.find(p=>p.type==='year').value),month:Number(t
 const fmt=n=>Math.round(n).toLocaleString('ru-RU');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const isUnassigned=rep=>rep.trim().toLocaleLowerCase('ru-RU')==='без представителя';
 function render(){
   const brands=['Все бренды',...new Set(rows.map(r=>r.brand).filter(Boolean))];
   document.getElementById('brands').innerHTML=brands.map(b=>`<button class="tab ${brand===b?'active':''}" data-brand="${esc(b)}">${esc(b)}</button>`).join('');
@@ -69,6 +70,7 @@ function render(){
   let prevPlan=0,prevSales=0;
   for(const r of previous){
     prevPlan+=r.plan;prevSales+=r.sales;
+    if(isUnassigned(r.rep))continue;
     const k=r.rep.toLocaleLowerCase('ru-RU');
     const v=prevPeople.get(k)||{name:r.rep,plan:0,sales:0};
     v.plan+=r.plan;v.sales+=r.sales;prevPeople.set(k,v);
@@ -97,6 +99,7 @@ function render(){
   const people=new Map();let totalPlan=0,totalSales=0;
   for(const r of subset){
     totalPlan+=r.plan;totalSales+=r.sales;
+    if(isUnassigned(r.rep))continue;
     const k=r.rep.toLocaleLowerCase('ru-RU');
     const v=people.get(k)||{name:r.rep,plan:0,sales:0,brands:new Map()};
     v.plan+=r.plan;v.sales+=r.sales;
@@ -163,7 +166,7 @@ function renderInsights(ranked,subset,totalPlan,totalSales){
   }
   // Aggregate monthly history by representative and selected brand, across the selected year.
   const yearRows=rows.filter(r=>r.year===selectedYear&&r.month<= (selectedYear===now.year?now.month:12)&&(brand==='Все бренды'||r.brand===brand));
-  const repNames=[...new Set(yearRows.map(r=>r.rep))].sort((a,b)=>a.localeCompare(b,'ru'));
+  const repNames=[...new Set(yearRows.filter(r=>!isUnassigned(r.rep)).map(r=>r.rep))].sort((a,b)=>a.localeCompare(b,'ru'));
   if(chartRep!=='__all__'&&!repNames.includes(chartRep))chartRep='__all__';
   const options=[['__all__','Все представители'],...repNames.map(n=>[n,n])];
   const filtered=yearRows.filter(r=>chartRep==='__all__'||r.rep===chartRep);
